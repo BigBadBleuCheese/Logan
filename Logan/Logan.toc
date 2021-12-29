@@ -1,0 +1,7 @@
+## Interface: 11401
+## Title: Logan
+## Notes: Never thought I'd play this dumb game again.
+## Version: 1.0
+## SavedVariablesPerCharacter: Settings
+
+Logan.lua
