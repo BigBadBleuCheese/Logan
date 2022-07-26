@@ -1,4 +1,4 @@
-## Interface: 90205
+## Interface: 11403
 ## Title: Logan
 ## Notes: Never thought I'd play this dumb game again.
 ## Version: 1.0
