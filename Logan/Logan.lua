@@ -2,14 +2,33 @@ if Settings == nil then
 	Settings = {
 		Enabled = true,
 		ChanceZone = 5,
-		ChatType = 'SAY'
+		ChatType = 'DYNAMIC'
 	}
 end
 
 local function SpeakZone()
 	local message = string.format("Never thought I'd find myself back in %s again.", GetZoneText())
+	if Settings.ChatType == 'SAY' or Settings.ChatType == 'YELL' then
+		print('Logan: Blizzard no longer allows add-ons to send messages to SAY or YELL outdoors when not directly tied to a hardware event. I have changed your chat type to DYNAMIC for now. You can change it with slash commands.')
+		Settings.ChatType = 'DYNAMIC'
+	end
 	if Settings.ChatType == 'PRIVATE' then
 		print(message)
+	elseif Settings.ChatType == 'DYNAMIC' then
+		if UnitInBattleground("player") ~= nil then
+			SendChatMessage(message, 'INSTANCE_CHAT')
+		elseif IsInRaid(LE_PARTY_CATEGORY_HOME) or IsInRaid(LE_PARTY_CATEGORY_INSTANCE) then
+			SendChatMessage(message, 'RAID')
+		elseif IsInGroup(LE_PARTY_CATEGORY_HOME) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+			SendChatMessage(message, 'PARTY')
+		else
+			local guildName, _, _, _ = GetGuildInfo('player')
+			if (guildName ~= nil) then
+				SendChatMessage(message, 'GUILD')
+			else
+				print(message)
+			end
+		end
 	else
 		SendChatMessage(message, Settings.ChatType)
 	end
@@ -90,10 +109,10 @@ function SlashCmdList.LOGAN(msg, editbox)
 			end
 		elseif command == 'chat' or command == 'chattype' then
 			if arguments == nil or arguments == '' then
-				print(string.format("Logan's current chat is %s. You can choose GUILD, INSTANCE_CHAT, OFFICER, PARTY, PRIVATE, RAID, RAID_WARNING, SAY, WHISPER, or YELL.", Settings.ChatType))
+				print(string.format("Logan's current chat is %s. You can choose DYNAMIC, GUILD, INSTANCE_CHAT, OFFICER, PARTY, PRIVATE, RAID, RAID_WARNING, or WHISPER.", Settings.ChatType))
 			else
 				local newChatType = string.upper(arguments)
-				if newChatType == 'GUILD' or newChatType == 'INSTANCE_CHAT' or newChatType == 'OFFICER' or newChatType == 'PARTY' or newChatType == 'PRIVATE' or newChatType == 'RAID' or newChatType == 'RAID_WARNING' or newChatType == 'SAY' or newChatType == 'WHISPER' or newChatType == 'YELL' then
+				if newChatType == 'DYNAMIC' or newChatType == 'GUILD' or newChatType == 'INSTANCE_CHAT' or newChatType == 'OFFICER' or newChatType == 'PARTY' or newChatType == 'PRIVATE' or newChatType == 'RAID' or newChatType == 'RAID_WARNING' or newChatType == 'WHISPER' then
 					Settings.ChatType = newChatType
 					print(string.format("Logan's chat is now %s.", Settings.ChatType))
 				else
