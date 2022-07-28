@@ -57,10 +57,16 @@ local function ShowHelp()
 end
 
 local LoganFrame = CreateFrame('Frame')
+LoganFrame:RegisterEvent('CHAT_MSG_CHANNEL')
 LoganFrame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 LoganFrame:SetScript('OnEvent', function(self, event, ...)
 	if Settings.Enabled then
-		if event == 'ZONE_CHANGED_NEW_AREA' then
+		if event == 'CHAT_MSG_CHANNEL' then
+			local text, _, _, channelName = ...
+			if text:find("^Never thought I'd find myself back in .*? again\.$") then
+				SendChatMessage("That's what I'm say'n!", channelName)
+			end
+		elseif event == 'ZONE_CHANGED_NEW_AREA' then
 			RollToSpeakZone()
 		end
 	end
