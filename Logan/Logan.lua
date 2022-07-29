@@ -93,7 +93,6 @@ LoganFrame:SetScript('OnEvent', function(self, event, ...)
 				if event == 'CHAT_MSG_WHISPER' then
 					SendChatMessage("That's what I'm say'n!", channelName, nil, sender)
 				else
-					print (channelName)
 					SendChatMessage("That's what I'm say'n!", channelName)
 				end
 			end
