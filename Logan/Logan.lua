@@ -58,13 +58,43 @@ end
 
 local LoganFrame = CreateFrame('Frame')
 LoganFrame:RegisterEvent('CHAT_MSG_CHANNEL')
+LoganFrame:RegisterEvent('CHAT_MSG_GUILD')
+LoganFrame:RegisterEvent('CHAT_MSG_INSTANCE_CHAT')
+LoganFrame:RegisterEvent('CHAT_MSG_INSTANCE_CHAT_LEADER')
+LoganFrame:RegisterEvent('CHAT_MSG_OFFICER')
+LoganFrame:RegisterEvent('CHAT_MSG_PARTY')
+LoganFrame:RegisterEvent('CHAT_MSG_PARTY_LEADER')
+LoganFrame:RegisterEvent('CHAT_MSG_RAID')
+LoganFrame:RegisterEvent('CHAT_MSG_RAID_LEADER')
+LoganFrame:RegisterEvent('CHAT_MSG_RAID_WARNING')
+LoganFrame:RegisterEvent('CHAT_MSG_SAY')
+LoganFrame:RegisterEvent('CHAT_MSG_WHISPER')
+LoganFrame:RegisterEvent('CHAT_MSG_YELL')
 LoganFrame:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 LoganFrame:SetScript('OnEvent', function(self, event, ...)
 	if Settings.Enabled then
-		if event == 'CHAT_MSG_CHANNEL' then
-			local text, _, _, channelName = ...
-			if text:find("Never thought I'd find myself back in .+ again\.") then
-				SendChatMessage("That's what I'm say'n!", channelName)
+		if event:find("^CHAT_MSG_") then
+			local realmName = GetRealmName()
+			local player = UnitName('player') .. '-' .. realmName
+			local text, sender, _, channelName = ...
+			if not sender:find("-") then
+				sender = sender .. '-' .. realmName
+			end
+			if sender ~= player and text:find("^Never thought I'd find myself back in .+ again\.$") then
+				if channelName == '' then
+					channelName = event:sub(10)
+				end
+				if channelName:find("_LEADER$") then
+					channelName = event:sub(1, channelName:len() - 7)
+				end
+				if channelName:find("_WARNING$") then
+					channelName = event:sub(1, channelName:len() - 8)
+				end
+				if event == 'CHAT_MSG_WHISPER' then
+					SendChatMessage("That's what I'm say'n!", channelName, nil, sender)
+				else
+					SendChatMessage("That's what I'm say'n!", channelName)
+				end
 			end
 		elseif event == 'ZONE_CHANGED_NEW_AREA' then
 			RollToSpeakZone()
