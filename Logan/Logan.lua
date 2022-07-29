@@ -85,14 +85,15 @@ LoganFrame:SetScript('OnEvent', function(self, event, ...)
 					channelName = event:sub(10)
 				end
 				if channelName:find("_LEADER$") then
-					channelName = event:sub(1, channelName:len() - 7)
+					channelName = channelName:sub(1, channelName:len() - 7)
 				end
 				if channelName:find("_WARNING$") then
-					channelName = event:sub(1, channelName:len() - 8)
+					channelName = channelName:sub(1, channelName:len() - 8)
 				end
 				if event == 'CHAT_MSG_WHISPER' then
 					SendChatMessage("That's what I'm say'n!", channelName, nil, sender)
 				else
+					print (channelName)
 					SendChatMessage("That's what I'm say'n!", channelName)
 				end
 			end
